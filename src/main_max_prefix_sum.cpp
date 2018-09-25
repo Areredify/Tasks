@@ -22,7 +22,7 @@ void raiseFail(const T &a, const T &b, std::string message, std::string filename
 int main(int argc, char **argv)
 {
     int benchmarkingIters = 11;
-    int max_n = 16 * (1 << 24);
+    int max_n = (1 << 24);
 
     gpu::Device device = gpu::chooseGPUDevice(argc, argv);
     //char *argvv[] = { "poop", "0" };
