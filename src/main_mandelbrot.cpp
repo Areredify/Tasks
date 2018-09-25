@@ -57,9 +57,9 @@ void renderInWindow(float centralX, float centralY, unsigned int iterationsLimit
 
 int main(int argc, char **argv)
 {
-    //gpu::Device device = gpu::chooseGPUDevice(argc, argv);
-    char *argvv[] = { "poop", "0" };
-    gpu::Device device = gpu::chooseGPUDevice(2, argvv);
+    gpu::Device device = gpu::chooseGPUDevice(argc, argv);
+    //char *argvv[] = { "poop", "0" };
+    //gpu::Device device = gpu::chooseGPUDevice(2, argvv);
 
     unsigned int benchmarkingIters = 10;
 
