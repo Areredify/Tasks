@@ -7,7 +7,6 @@
 #include <libimages/images.h>
 
 #include <cstdio>
-#include <conio.h>
 
 #include "cl/mandelbrot_cl.h"
 

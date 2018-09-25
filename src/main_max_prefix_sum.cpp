@@ -4,9 +4,6 @@
 #include <libgpu/context.h>
 #include <libgpu/shared_device_buffer.h>
 
-#include <conio.h>
-
-
 #include "cl/max_prefix_sum_cl.h"
 
 
@@ -136,6 +133,5 @@ int main(int argc, char **argv)
         }
     }
 
-    _getch();
     return 0;
 }

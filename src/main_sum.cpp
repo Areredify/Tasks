@@ -4,8 +4,6 @@
 #include <libgpu/context.h>
 #include <libgpu/shared_device_buffer.h>
 
-#include <conio.h>
-
 #include "cl/sum_cl.h"
 
 
@@ -98,6 +96,4 @@ int main(int argc, char **argv)
             std::cout << "GPU:     " << (n / 1000.0 / 1000.0) / t.lapAvg() << " millions/s" << std::endl;
         }
     }
-
-    _getch();
 }
