@@ -75,7 +75,7 @@ int main(int argc, char **argv)
         {
             ocl::Kernel kernel(sum_kernel, sum_kernel_length, "sum");
         
-            bool printLog = false;
+            bool printLog = true;
             kernel.compile(printLog);
             gpu::gpu_mem_32u kernel_input;
             kernel_input.resizeN(n);

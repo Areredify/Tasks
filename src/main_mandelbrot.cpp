@@ -82,8 +82,8 @@ int main(int argc, char **argv)
 
     float sizeY = sizeX * height / width;
 
-    std::remove("mandelbrot_cpu.png");
-    std::remove("mandelbrot_gpu.png");
+    //std::remove("mandelbrot_cpu.png");
+    //std::remove("mandelbrot_gpu.png");
 
     {
         timer t;
