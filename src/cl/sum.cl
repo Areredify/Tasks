@@ -1,5 +1,7 @@
 // TODO
 #define MAX_WORK_GROUP_SIZE 256
+#define WARP_SIZE 32
+
 __kernel void sum(__global const unsigned int * input, __global unsigned int * res, unsigned int n) 
 {
     unsigned int local_id = get_local_id(0),
@@ -17,8 +19,9 @@ __kernel void sum(__global const unsigned int * input, __global unsigned int * r
     {
         if (2 * local_id < values_to_add)
             local_sum[local_id] = local_sum[local_id] + local_sum[local_id + values_to_add / 2];
-    
-        barrier(CLK_LOCAL_MEM_FENCE);
+
+        if (values_to_add > 32)
+            barrier(CLK_LOCAL_MEM_FENCE);
     }
     
     if (local_id == 0)
