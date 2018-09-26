@@ -1,7 +1,6 @@
 // TODO
 
 #define WORK_GROUP_SIZE 128
-#define WARP_SIZE 32
 
 __kernel void max_prefix_sum(__global const int * sum_input, __global const int * prefix_input, __global const int * ind_input, const unsigned int input_size,
                              __global int * sum_output, __global int * prefix_output, __global int * ind_output)
@@ -50,8 +49,7 @@ __kernel void max_prefix_sum(__global const int * sum_input, __global const int 
             other_sum[local_id] = local_sum[2 * local_id] + local_sum[2 * local_id + 1];
         }
 
-        if (values_to_process > WARP_SIZE)
-            barrier(CLK_LOCAL_MEM_FENCE);
+        barrier(CLK_LOCAL_MEM_FENCE);
 
         tmp = other_prefix;
         other_prefix = local_prefix;
