@@ -13,16 +13,19 @@
 
 int main(int argc, char **argv)
 {
-    gpu::Device device = gpu::chooseGPUDevice(argc, argv);
+    //gpu::Device device = gpu::chooseGPUDevice(argc, argv);
+
+    char *argvv[] = { "poop", "0" };
+    gpu::Device device = gpu::chooseGPUDevice(2, argvv);
 
     gpu::Context context;
     context.init(device.device_id_opencl);
     context.activate();
 
-    int benchmarkingIters = 10; // TODO пока тестируетесь удобно выставить единицу
-    unsigned int M = 1024;
-    unsigned int K = 1024;
-    unsigned int N = 1024;
+    int benchmarkingIters = 1; // TODO пока тестируетесь удобно выставить единицу
+    unsigned int M = 400;
+    unsigned int K = 200;
+    unsigned int N = 300;
     const size_t gflops = ((size_t) M * K * N * 2) / (1000 * 1000 * 1000); // умножить на два, т.к. операция сложения и умножения
 
     std::vector<float> as(M*K, 0);
@@ -58,7 +61,6 @@ int main(int argc, char **argv)
 
     const std::vector<float> cs_cpu_reference = cs;
 
-    /*
     gpu::gpu_mem_32f as_gpu, bs_gpu, cs_gpu;
     as_gpu.resizeN(M*K);
     bs_gpu.resizeN(K*N);
@@ -73,10 +75,10 @@ int main(int argc, char **argv)
     {
         timer t;
         for (int iter = 0; iter < benchmarkingIters; ++iter) {
-            // TODO
-            unsigned int work_group_size = 128;
-            unsigned int global_work_size = ...;
-            matrix_multiplication_kernel.exec(gpu::WorkSize(work_group_size, global_work_size), as_gpu, bs_gpu, cs_gpu, M, K, N);
+            unsigned int tile_size = 16;
+            unsigned int global_size_x = (N + tile_size - 1) / tile_size * tile_size,
+                         global_size_y = (M + tile_size - 1) / tile_size * tile_size;
+            matrix_multiplication_kernel.exec(gpu::WorkSize(tile_size, tile_size, global_size_x, global_size_y), as_gpu, bs_gpu, cs_gpu, M, K, N);
 
             t.nextLap();
         }
@@ -85,16 +87,17 @@ int main(int argc, char **argv)
     }
 
     cs_gpu.readN(cs.data(), M*N);
-    */
 
     // Проверяем корректность результатов
     double diff_sum = 0;
+    double mx = 0;
     for (int i = 0; i < M * N; ++i) {
         double a = cs[i];
         double b = cs_cpu_reference[i];
         if (a != 0.0 && b != 0.0) {
-            double diff = fabs(a - b) / std::max(fabs(a), fabs(b));
-            diff_sum += diff;
+             double diff = fabs(a - b) / std::max(fabs(a), fabs(b));
+             diff_sum += diff;
+             mx = std::max(diff, mx);
         }
     }
 
