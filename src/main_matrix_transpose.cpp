@@ -10,12 +10,12 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <conio.h>
-
 
 int main(int argc, char **argv)
 {
     gpu::Device device = gpu::chooseGPUDevice(argc, argv);
+    //char *argvv[] = { "poop", "0" };
+    //gpu::Device device = gpu::chooseGPUDevice(2, argvv);
 
     gpu::Context context;
     context.init(device.device_id_opencl);
