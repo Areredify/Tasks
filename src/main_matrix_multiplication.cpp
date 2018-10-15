@@ -13,20 +13,17 @@
 
 int main(int argc, char **argv)
 {
-    //gpu::Device device = gpu::chooseGPUDevice(argc, argv);
-
-    char *argvv[] = { "poop", "0" };
-    gpu::Device device = gpu::chooseGPUDevice(2, argvv);
+    gpu::Device device = gpu::chooseGPUDevice(argc, argv);
 
     gpu::Context context;
     context.init(device.device_id_opencl);
     context.activate();
 
-    int benchmarkingIters = 1; // TODO пока тестируетесь удобно выставить единицу
-    unsigned int M = 400;
-    unsigned int K = 200;
-    unsigned int N = 300;
-    const size_t gflops = ((size_t) M * K * N * 2) / (1000 * 1000 * 1000); // умножить на два, т.к. операция сложения и умножения
+    int benchmarkingIters = 10; // TODO пока тестируетесь удобно выставить единицу
+    unsigned int M = 1000;
+    unsigned int K = 1000;
+    unsigned int N = 1000;
+    const size_t gflops = ((size_t) M * K * N * 2) / (1000.0 * 1000.0 * 1000.0); // умножить на два, т.к. операция сложения и умножения
 
     std::vector<float> as(M*K, 0);
     std::vector<float> bs(K*N, 0);

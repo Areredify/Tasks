@@ -15,9 +15,7 @@
 
 int main(int argc, char **argv)
 {
-    //gpu::Device device = gpu::chooseGPUDevice(argc, argv);
-    char *argvv[] = { "poop", "0" };
-    gpu::Device device = gpu::chooseGPUDevice(2, argvv);
+    gpu::Device device = gpu::chooseGPUDevice(argc, argv);
 
     gpu::Context context;
     context.init(device.device_id_opencl);
