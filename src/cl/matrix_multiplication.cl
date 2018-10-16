@@ -1,4 +1,4 @@
-#define TILE_SIZE 1
+#define TILE_SIZE 16
 
 __kernel void matrix_multiplication(__global float * a, __global float * b, __global float * c, unsigned int M, unsigned int K, unsigned int N) {
     __local float local_a[TILE_SIZE][TILE_SIZE], local_b[TILE_SIZE][TILE_SIZE];
@@ -25,6 +25,8 @@ __kernel void matrix_multiplication(__global float * a, __global float * b, __gl
 
         for (unsigned int i = 0; i < TILE_SIZE; i++)
             sum += local_a[l_y][i] * local_b[i][l_x];
+
+        barrier(CLK_LOCAL_MEM_FENCE);
     }
 
     if (g_y < M && g_x < N)

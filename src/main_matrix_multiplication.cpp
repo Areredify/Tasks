@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     context.init(device.device_id_opencl);
     context.activate();
 
-    int benchmarkingIters = 1; // TODO пока тестируетесь удобно выставить единицу
+    int benchmarkingIters = 10; // TODO пока тестируетесь удобно выставить единицу
     unsigned int M = 1000;
     unsigned int K = 1000;
     unsigned int N = 1000;
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
     {
         timer t;
         for (int iter = 0; iter < benchmarkingIters; ++iter) {
-            unsigned int tile_size = 1;
+            unsigned int tile_size = 16;
             unsigned int global_size_x = (N + tile_size - 1) / tile_size * tile_size,
                          global_size_y = (M + tile_size - 1) / tile_size * tile_size;
             matrix_multiplication_kernel.exec(gpu::WorkSize(tile_size, tile_size, global_size_x, global_size_y), as_gpu, bs_gpu, cs_gpu, M, K, N);
