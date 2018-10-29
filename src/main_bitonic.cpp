@@ -52,13 +52,15 @@ int main(int argc, char **argv)
         std::cout << "CPU: " << t.lapAvg() << "+-" << t.lapStd() << " s" << std::endl;
         std::cout << "CPU: " << (n/1000/1000) / t.lapAvg() << " millions/s" << std::endl;
     }
-/*
+
     gpu::gpu_mem_32f as_gpu;
     as_gpu.resizeN(n);
 
     {
         ocl::Kernel bitonic(bitonic_kernel, bitonic_kernel_length, "bitonic");
+        ocl::Kernel bitonic_local(bitonic_kernel, bitonic_kernel_length, "bitonic_local");
         bitonic.compile();
+        bitonic_local.compile();
 
         timer t;
         for (int iter = 0; iter < benchmarkingIters; ++iter) {
@@ -67,9 +69,22 @@ int main(int argc, char **argv)
             t.restart(); // Запускаем секундомер после прогрузки данных чтобы замерять время работы кернела, а не трансфер данных
 
             unsigned int workGroupSize = 128;
-            unsigned int global_work_size = (n + workGroupSize - 1) / workGroupSize * workGroupSize;
-            bitonic.exec(gpu::WorkSize(workGroupSize, global_work_size),
-                         as_gpu, n);
+
+            for (unsigned int max_half_block_size = 1; max_half_block_size <= n; max_half_block_size *= 2) {
+                auto half_block_size = max_half_block_size;
+                unsigned int global_work_size = ((n + 1) / 2 + workGroupSize - 1) / workGroupSize * workGroupSize;
+
+                if (half_block_size > workGroupSize) {
+                    bitonic.exec(gpu::WorkSize(workGroupSize, global_work_size), as_gpu, n, half_block_size, 1u);
+                    half_block_size /= 2;
+
+                    for (; half_block_size > workGroupSize; half_block_size /= 2)
+                        bitonic.exec(gpu::WorkSize(workGroupSize, global_work_size), as_gpu, n, half_block_size, 0u);
+                    bitonic_local.exec(gpu::WorkSize(workGroupSize, global_work_size), as_gpu, n, half_block_size, 0u);
+                }
+                else
+                    bitonic_local.exec(gpu::WorkSize(workGroupSize, global_work_size), as_gpu, n, half_block_size, 1u);
+            }
             t.nextLap();
         }
         std::cout << "GPU: " << t.lapAvg() << "+-" << t.lapStd() << " s" << std::endl;
@@ -82,6 +97,6 @@ int main(int argc, char **argv)
     for (int i = 0; i < n; ++i) {
         EXPECT_THE_SAME(as[i], cpu_sorted[i], "GPU results should be equal to CPU results!");
     }
-*/
+
     return 0;
 }
